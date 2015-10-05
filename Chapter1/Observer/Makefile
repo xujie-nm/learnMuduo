@@ -9,11 +9,15 @@ CXXFLAGS = -g -O0 -Wall -Wextra -Werror\
 
 LDFLAGS = -I$(MUDUO_INCLUDE) -L$(MUDUO_LIBRARY) -lmuduo_net -lmuduo_base -lpthread -lrt
 
-all: Observer
+all: Observer Observer_safe
 clean:
 	rm -f Observer core
+	rm -f Observer_safe core
 
-Counter: Observer.cpp
+Observer: Observer.cpp
+	g++ $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+
+Observer_safe: Observer_safe.cpp
 	g++ $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 .PHONY: all clean
