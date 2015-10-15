@@ -3,13 +3,13 @@ CXXFLAGS = -g -O0 -Wall -Wextra -Werror\
 		   -Wold-style-cast -Woverloaded-virtual\
 		   -Wpointer-arith -Wshadow -Wwrite-strings\
 
-LDFLAGS = ../Thread.cpp -lpthread -lrt
+LDFLAGS = ../Thread.cpp -lpthread -lrt -std=c++0x
 
-all: Factory
+all: SignalSlotTest
 clean:
-	rm -f Factory core
+	rm -f SignalSlotTest core
 
-Factory: Factory.cpp
+SignalSlotTest: SignalSlotTest.cpp
 	g++ $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 .PHONY: all clean
