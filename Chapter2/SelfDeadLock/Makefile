@@ -5,11 +5,11 @@ CXXFLAGS = -g -O0 -Wall -Wextra -Werror\
 
 LDFLAGS = ../Thread.cpp -lpthread -lrt
 
-all: NonRecursiveMutex
+all: SelfDeadLock
 clean:
-	rm -f NonRecursiveMutex core
+	rm -f SelfDeadLock core
 
-NonRecusiveMutex: NonRecursiveMutex.cpp
+SelfDeadLock: SelfDeadLock.cpp
 	g++ $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 .PHONY: all clean
