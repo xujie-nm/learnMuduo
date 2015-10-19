@@ -29,6 +29,7 @@ class Singleton{
         }
             
         static T* volatile m_pInstance;
+        //确保编译器不会优化！！
 };
 
 template<typename T>
