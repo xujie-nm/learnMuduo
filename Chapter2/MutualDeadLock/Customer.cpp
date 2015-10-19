@@ -38,6 +38,7 @@ class CustomerData : boost::noncopyable{
 
 int CustomerData::query(const string& customer, const string& stock) const{
     MapPtr data = getData();
+    // getdata里有锁，在拿到数据之后就不需要锁了
 
     Map::const_iterator entries = data->find(customer);
     if(entries != data->end())
@@ -50,6 +51,7 @@ void CustomerData::update(const string& customer, const EntryList& entries){
     muduo::MutexLockGuard lock(mutex_);
     if(!data_.unique()){
         MapPtr newData(new Map(*data_));
+        // 在这里打印日志，然后统计日志来判断 Worst case 发生的次数
         data_.swap(newData);
     }
     assert(data_.unique());
@@ -57,11 +59,13 @@ void CustomerData::update(const string& customer, const EntryList& entries){
 }
 
 void CustomerData::update(const string& message){
+    // 解析新数据，在临界区之外
     MapPtr newData = parseData(message);
     if(newData){
         muduo::MutexLockGuard lock(mutex_);
         data_.swap(newData);
     }
+    // 旧数据的析构也在临界区之外没进一步缩短了临界区
 }
 
 int main(int argc, const char *argv[])
