@@ -9,13 +9,21 @@ CXXFLAGS = -g -O0 -Wall -Wextra -Werror \
 	   -march=native -rdynamic \
 	   -I$(MUDUO_INCLUDE)
 
-LDFLAGS = -L$(MUDUO_LIBRARY) -lmuduo_base -lmuduo_net -lpthread -lrt -std=c++0x
+LDFLAGS = -L$(MUDUO_LIBRARY) -lmuduo_base -lmuduo_net -lpthread -lrt
 
-all: bench
+all: bench server client
 clean:
 	rm -f bench core
+	rm -f server core
+	rm -f client core
 
 bench: ../Echo/echo.cpp bench.cpp
+	g++ $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+
+server: server.cpp
+	g++ $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+
+client: client.cpp
 	g++ $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 .PHONY: all clean
