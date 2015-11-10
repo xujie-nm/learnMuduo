@@ -1,0 +1,53 @@
+#include <muduo/base/Logging.h>
+#include <muduo/net/EventLoop.h>
+#include <muduo/net/TcpServer.h>
+#include "codec.h"
+
+#include <boost/bind.hpp>
+#include <stdio.h>
+
+bool g_tcpNoDelay = false;
+
+void onConnection(const muduo::net::TcpConnectionPtr& conn){
+    if(conn->connected())
+        conn->setTcpNoDelay(g_tcpNoDelay);
+}
+
+void onStringMessage(LengthHeaderCodec* codec,
+                     const muduo::net::TcpConnectionPtr& conn,
+                     const muduo::string& message,
+                     muduo::Timestamp)
+{
+    codec->send(get_pointer(conn), message);
+}
+
+int main(int argc, const char *argv[])
+{
+    if(argc > 1){
+        uint16_t port = static_cast<uint16_t>(atoi(argv[1]));
+        g_tcpNoDelay = argc > 2 ? atoi(argv[2]) : 0;
+        int threadCount = argc > 3 ? atoi(argv[3]) : 0;
+
+        LOG_INFO << "pid = " << getpid() << ", listen port = " << port;
+        // mduuo::Logger::setLogLevel(mduuo::Logger::WARN);
+        muduo::net::EventLoop loop;
+        muduo::net::InetAddress listenAddr(port);
+        muduo::net::TcpServer server(&loop, listenAddr, "PingPong");
+        LengthHeaderCodec codec(boost::bind(onStringMessage, &codec, _1, _2, _3));
+
+        server.setConnectionCallback(onConnection);
+        server.setMessageCallback(
+                boost::bind(&LengthHeaderCodec::onMessage, &codec, _1, _2, _3));
+
+        if(threadCount > 1){
+            server.setThreadNum(threadCount);
+        }
+
+        server.start();
+
+        loop.loop();
+    }else{
+        fprintf(stderr, "Usage: %s listen_port [tcp_no_delay [threads]]i\n", argv[0]);
+    }
+    return 0;
+}
