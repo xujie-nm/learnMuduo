@@ -4,6 +4,8 @@
 
 #include <boost/bind.hpp>
 
+#include <stdlib.h>
+
 EchoServer::EchoServer(muduo::net::EventLoop* loop,
                        const muduo::net::InetAddress& listenAddr)
     : server_(loop, listenAddr, "EchoServer"){
@@ -30,5 +32,27 @@ void EchoServer::onMessage(const muduo::net::TcpConnectionPtr& conn,
     muduo::string msg(buf->retrieveAllAsString());
     LOG_INFO << conn->name() << " echo " << msg.size() << " bytes, "
              << " data receive at " << time.toString();
+    //changeWord(msg);
+    //rot13(msg);
     conn->send(msg);
+}
+
+void EchoServer::changeWord(muduo::string& msg){
+    for (size_t i = 0; i < msg.size(); i++) {
+        if(islower(msg[i]))
+            msg[i] = toupper(msg[i]);
+        else if(isupper(msg[i]))
+            msg[i] = tolower(msg[i]);
+    }
+}
+
+void EchoServer::rot13(muduo::string& msg){
+    for (size_t i = 0; i < msg.size(); i++) {
+        if(isalpha(msg[i])){
+            if(islower(msg[i]))
+                msg[i] = (msg[i] - 'a' + 13) % 26 + 'a';
+            else
+                msg[i] = (msg[i] - 'A' + 13) % 26 + 'A';
+        }
+    }
 }

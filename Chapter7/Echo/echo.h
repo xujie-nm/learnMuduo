@@ -17,6 +17,10 @@ class EchoServer{
                        muduo::net::Buffer* buf,
                        muduo::Timestamp time);
 
+        void changeWord(muduo::string& msg);
+
+        void rot13(muduo::string& msg);
+
         muduo::net::TcpServer server_;
 };
 
