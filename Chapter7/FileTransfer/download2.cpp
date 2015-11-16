@@ -60,6 +60,7 @@ void onWriteComplete(const TcpConnectionPtr& conn){
 
 // 把文件分成一块块的发送，减少内存的消耗
 // 但是文件指针fp的管理有一些麻烦
+// 并且有多个连接时会有很多重复的文件指针
 int main(int argc, const char *argv[])
 {
     LOG_INFO << "pid = " << getpid();
