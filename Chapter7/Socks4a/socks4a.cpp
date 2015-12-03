@@ -52,7 +52,9 @@ void onServerMessage(const TcpConnectionPtr& conn, Buffer* buf, Timestamp){
                         string hostname = where+1;
                         where = endOfHostName;
                         LOG_INFO << "Socks4a host name " << hostname;
-                        InetAddress tmp;
+                        InetAddress tmpo;
+                        // 这里调用gethostbyname()
+                        // 会发生IO阻塞
                         if(InetAddress::resolve(hostname, &tmp)){
                             addr.sin_addr.s_addr = tmp.ipNetEndian();
                             okay = true;
