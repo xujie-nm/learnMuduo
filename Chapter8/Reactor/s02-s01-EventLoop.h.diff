@@ -1,0 +1,70 @@
+*** ./s01/EventLoop.h	2015-12-08 15:39:51.932000000 +0800
+--- ./s02/EventLoop.h	2015-12-09 14:48:49.359952000 +0800
+***************
+*** 1,7 ****
+--- 1,10 ----
+  #ifndef MUDUO_NET_EVENTLOOP_H
+  #define MUDUO_NET_EVENTLOOP_H
+  
++ #include "datetime/Timestamp.h"
+  #include "thread/Thread.h"
++ #include "Callbacks.h"
++ #include "TimerId.h"
+  
+  #include <boost/scoped_ptr.hpp>
+  #include <vector>
+***************
+*** 9,14 ****
+--- 12,18 ----
+  namespace muduo{
+      class Channel;
+      class Poller;
++     class TimerQueue;
+  
+      class EventLoop : boost::noncopyable{
+          public:
+***************
+*** 36,41 ****
+--- 40,69 ----
+              // 可能当前还在loop中
+              void quit();
+  
++             ///
++             /// Time when poll returns, usually means data arrivial.
++             ///
++             Timestamp pollReturnTime() const{
++                 return pollReturnTime_;
++             }
++ 
++             // timers
++ 
++             ///
++             /// Runs callback at 'time'.
++             ///
++             TimerId runAt(const Timestamp& time, const TimerCallback& cb);
++             ///
++             /// Runs callback after @c delay seconds
++             ///
++             TimerId runAfter(double delay, const TimerCallback& cb);
++             ///
++             /// Runs callback every @c interval seconds.
++             ///
++             TimerId runEvery(double interval, const TimerCallback& cb);
++ 
++             // void cancel(TimerId timerId)
++ 
+              // internal use only
+              // 通过调用Poller的updateChannel来实现
+              void updateChannel(Channel* channel);
+***************
+*** 62,68 ****
+--- 90,98 ----
+              bool looping_; // atomic
+              bool quit_; // atomic
+              const pid_t threadId_;
++             Timestamp pollReturnTime_;
+              boost::scoped_ptr<Poller> poller_;
++             boost::scoped_ptr<TimerQueue> timerQueue_;
+              ChannelList activeChannels_;
+      };
+  }
