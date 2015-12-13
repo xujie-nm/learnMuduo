@@ -1,0 +1,23 @@
+*** ./s02/TimerQueue.h	2015-12-12 17:07:07.484000000 +0800
+--- ./s03/TimerQueue.h	2015-12-13 16:44:15.520000000 +0800
+***************
+*** 32,37 ****
+--- 32,38 ----
+              /// 
+              /// Must be thread safe, Usually be called from other threads.
+              /// 供EventLoop使用
++             /// 通过调用runInLoop来增加线程安全性
+              TimerId addTimer(const TimerCallback& cb,
+                               Timestamp when,
+                               double interval);
+***************
+*** 44,49 ****
+--- 45,52 ----
+              typedef std::pair<Timestamp, Timer* > Entry;
+              typedef std::set<Entry> TimerList;
+  
++             // 在IO线程中调用这个函数，用它来完成修改定时器列表的工作
++             void addTimerInLoop(Timer* timer);
+              // called when timerfd alarms
+              void handleRead();
+              // move out all expired timers
