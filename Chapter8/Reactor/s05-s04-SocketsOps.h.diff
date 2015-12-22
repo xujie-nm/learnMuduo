@@ -1,0 +1,13 @@
+*** ./s04/SocketsOps.h	2015-12-13 20:55:58.904000000 +0800
+--- ./s05/SocketsOps.h	2015-12-16 22:41:55.232000000 +0800
+***************
+*** 46,51 ****
+--- 46,53 ----
+      void fromHostPort(const char* ip, uint16_t port,
+                      struct sockaddr_in* addr);
+  
++     struct sockaddr_in getLocalAddr(int sockfd);
++ 
+  }
+  }
+  

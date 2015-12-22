@@ -1,0 +1,19 @@
+*** ./s04/Callbacks.h	2015-12-15 15:03:22.400079000 +0800
+--- ./s05/Callbacks.h	2015-12-16 22:07:43.084150000 +0800
+***************
+*** 10,16 ****
+--- 10,23 ----
+      
+      // All client visible callbacks go here.
+  
++     class TcpConnection;
++     typedef boost::shared_ptr<TcpConnection> TcpConnectionPtr;
++ 
+      typedef boost::function<void()> TimerCallback;
++     typedef boost::function<void (const TcpConnectionPtr&)> ConnectionCallback;
++     typedef boost::function<void (const TcpConnectionPtr&,
++                                   const char* data,
++                                   ssize_t len)> MessageCallback;
+  
+  }
+  
