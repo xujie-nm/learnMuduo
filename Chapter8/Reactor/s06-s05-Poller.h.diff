@@ -1,0 +1,15 @@
+*** ./s05/Poller.h	2015-12-16 22:01:16.632150000 +0800
+--- ./s06/Poller.h	2015-12-23 16:09:14.761544000 +0800
+***************
+*** 32,37 ****
+--- 32,41 ----
+              /// 更新维护pollfds数组
+              void updateChannel(Channel* channel);
+  
++             /// Remove the channel, when it destructs.
++             /// Must be called in the loop thread.
++             void removeChannel(Channel* channel);
++ 
+              void assertInLoopThread(){
+                  ownerLoop_->assertInLoopThread();
+              }

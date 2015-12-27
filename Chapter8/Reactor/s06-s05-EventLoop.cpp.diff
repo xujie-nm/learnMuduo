@@ -1,0 +1,17 @@
+*** ./s05/EventLoop.cpp	2015-12-16 22:01:16.632150000 +0800
+--- ./s06/EventLoop.cpp	2015-12-23 16:07:07.797544000 +0800
+***************
+*** 126,131 ****
+--- 126,137 ----
+      poller_->updateChannel(channel);
+  }
+  
++ void EventLoop::removeChannel(Channel* channel){
++     assert(channel->ownerLoop() == this);
++     assertInLoopThread();
++     poller_->removeChannel(channel);
++ }
++ 
+  void EventLoop::abortNotInLoopThread(){
+      LOG_FATAL << "EventLoop::abortNotInLoopThread - EventLoop " << this
+                << " was created in threadId_ = " << threadId_

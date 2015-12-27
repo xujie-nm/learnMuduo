@@ -1,0 +1,24 @@
+*** ./s05/TcpServer.cpp	2015-12-22 19:35:14.395997990 +0800
+--- ./s06/TcpServer.cpp	2015-12-23 20:46:20.480000000 +0800
+***************
+*** 52,56 ****
+--- 52,70 ----
+      connections_[connName] = conn;
+      conn->setConnectionCallback(connectionCallback_);
+      conn->setMessageCallback(messageCallback_);
++     conn->setCloseCallback(
++             boost::bind(&TcpServer::removeConnection, this, _1));
+      conn->connectEstablished();
+  }
++ 
++ void TcpServer::removeConnection(const TcpConnectionPtr& conn){
++     loop_->assertInLoopThread();
++     LOG_INFO << "TcpServer::removeConnection [" << name_
++              << "] - connection " << conn->name();
++     size_t n = connections_.erase(conn->name());
++     assert(n == 1);
++     (void) n;
++     // 延长生命周期,让conn的生命周期延长到connectedDestoryed被调用的时候
++     loop_->queueInLoop(
++             boost::bind(&TcpConnection::connectDestoryed, conn));
++ }

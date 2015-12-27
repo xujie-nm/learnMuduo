@@ -1,0 +1,52 @@
+*** ./s05/Channel.cpp	2015-12-16 22:01:16.632150000 +0800
+--- ./s06/Channel.cpp	2015-12-22 22:01:07.364000000 +0800
+***************
+*** 17,23 ****
+        fd_(fdArg),
+        events_(0),
+        revents_(0),
+!       index_(-1){
+  }
+  
+  void Channel::update(){
+--- 17,28 ----
+        fd_(fdArg),
+        events_(0),
+        revents_(0),
+!       index_(-1),
+!       eventHandling_(false){
+! }
+! 
+! Channel::~Channel(){
+!     assert(!eventHandling_);
+  }
+  
+  void Channel::update(){
+***************
+*** 25,34 ****
+--- 30,46 ----
+  }
+  
+  void Channel::handleEvent(){
++     eventHandling_ = true;
+      if(revents_ & POLLNVAL){
+          LOG_WARN << "Channel::handle_event() POLLNVAL";
+      }
+  
++     if((revents_ & POLLHUP) && !(revents_ & POLLIN)){
++         // 挂断
++         LOG_WARN << "Channel::handle_event() POLLHUP";
++         if(closeCallback_)
++             closeCallback_();
++     }
+      if(revents_ & (POLLERR | POLLNVAL)){
+          if(errorCallback_)
+              errorCallback_();
+***************
+*** 41,44 ****
+--- 53,57 ----
+          if(writeCallback_)
+              writeCallback_();
+      }
++     eventHandling_ = false;
+  }

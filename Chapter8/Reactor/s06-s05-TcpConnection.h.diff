@@ -1,0 +1,57 @@
+*** ./s05/TcpConnection.h	2015-12-22 19:52:19.287997990 +0800
+--- ./s06/TcpConnection.h	2015-12-23 17:22:30.991373000 +0800
+***************
+*** 62,73 ****
+              }
+  
+              /// Internal use only.
+              
+              // called when TcpServer accepts a new connection
+              void connectEstablished(); // should be called only once
+  
+          private:
+!             enum StateE { kConnecting, kConnected, };
+  
+              void setState(StateE s){
+                  state_ = s;
+--- 62,79 ----
+              }
+  
+              /// Internal use only.
++             void setCloseCallback(const CloseCallback& cb){
++                 closeCallback_ = cb;
++             }
+              
+              // called when TcpServer accepts a new connection
+              void connectEstablished(); // should be called only once
+  
++             // called when TcpServer has removed me from its map
++             void connectDestoryed(); // should be called only once
++ 
+          private:
+!             enum StateE { kConnecting, kConnected, kDisconnected,};
+  
+              void setState(StateE s){
+                  state_ = s;
+***************
+*** 75,80 ****
+--- 81,89 ----
+  
+              // 把readable事件交给messagecallback
+              void handleRead();
++             void handleWrite();
++             void handleClose();
++             void handleError();
+  
+              EventLoop* loop_;
+              std::string name_;
+***************
+*** 86,91 ****
+--- 95,101 ----
+              InetAddress peerAddr_;
+              ConnectionCallback connectionCallback_;
+              MessageCallback messageCallback_;
++             CloseCallback closeCallback_;
+      };
+  
+      typedef boost::shared_ptr<TcpConnection> TcpConnectionPtr;

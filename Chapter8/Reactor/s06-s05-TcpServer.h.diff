@@ -1,0 +1,12 @@
+*** ./s05/TcpServer.h	2015-12-22 19:35:17.579997990 +0800
+--- ./s06/TcpServer.h	2015-12-23 17:07:52.116380000 +0800
+***************
+*** 41,46 ****
+--- 41,47 ----
+          private:
+              /// Not thread safe, but in loop
+              void newConnection(int sockfd, const InetAddress& peerAddr);
++             void removeConnection(const TcpConnectionPtr& conn);
+  
+              typedef std::map<std::string, TcpConnectionPtr> ConnectionMap;
+  

@@ -1,0 +1,19 @@
+*** ./s05/EventLoop.h	2015-12-16 22:01:16.632150000 +0800
+--- ./s06/EventLoop.h	2015-12-23 16:04:37.057544000 +0800
+***************
+*** 88,94 ****
+  
+              void updateChannel(Channel* channel);
+              // 通过调用Poller的updateChannel来实现
+!             // void removeChannel(Channel* channel);
+  
+              void assertInLoopThread(){
+              //　断言是否在本线程中
+--- 88,94 ----
+  
+              void updateChannel(Channel* channel);
+              // 通过调用Poller的updateChannel来实现
+!             void removeChannel(Channel* channel);
+  
+              void assertInLoopThread(){
+              //　断言是否在本线程中

@@ -1,0 +1,13 @@
+*** ./s05/SocketsOps.h	2015-12-16 22:41:55.232000000 +0800
+--- ./s06/SocketsOps.h	2015-12-23 16:26:54.729544000 +0800
+***************
+*** 48,53 ****
+--- 48,55 ----
+  
+      struct sockaddr_in getLocalAddr(int sockfd);
+  
++     int getSocketError(int sockfd);
++ 
+  }
+  }
+  

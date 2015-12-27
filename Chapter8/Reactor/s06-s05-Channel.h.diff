@@ -1,0 +1,62 @@
+*** ./s05/Channel.h	2015-12-16 22:01:16.632150000 +0800
+--- ./s06/Channel.h	2015-12-23 17:23:55.271373000 +0800
+***************
+*** 17,22 ****
+--- 17,23 ----
+              typedef boost::function<void()> EventCallback;
+  
+              Channel(EventLoop* loop, int fd);
++             ~Channel();
+  
+              // 核心函数
+              // 根据revents的值调用不同的用户回调
+***************
+*** 31,36 ****
+--- 32,40 ----
+              void setErrorCallback(const EventCallback& cb){
+                  errorCallback_ = cb;
+              }
++             void setCloseCallback(const EventCallback& cb){
++                 closeCallback_ = cb;
++             }
+  
+              int fd() const{
+                  return fd_;
+***************
+*** 57,66 ****
+              //    events_ &= ~kWriteEvent; 
+              //    update();
+              //}
+!             //void disableAll(){
+!             //    events_ = kNoneEvent;
+!             //    update();
+!             //}
+  
+              // for Poller
+              int index(){
+--- 61,70 ----
+              //    events_ &= ~kWriteEvent; 
+              //    update();
+              //}
+!             void disableAll(){
+!                 events_ = kNoneEvent;
+!                 update();
+!             }
+  
+              // for Poller
+              int index(){
+***************
+*** 91,99 ****
+--- 95,106 ----
+              int revents_;
+              int index_; // used by Poller.
+  
++             bool eventHandling_;
++ 
+              EventCallback readCallback_;
+              EventCallback writeCallback_;
+              EventCallback errorCallback_;
++             EventCallback closeCallback_;
+      };
+  }
+  
