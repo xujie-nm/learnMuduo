@@ -1,0 +1,31 @@
+*** ./s06/test3.cpp	2015-12-22 21:30:57.980690000 +0800
+--- ./s07/test3.cpp	2015-12-27 21:56:41.072000000 +0800
+***************
+*** 6,13 ****
+  
+  muduo::EventLoop* g_loop;
+  
+! void timeout(){
+!     printf("Timeout! go go go!!!!\n");
+      g_loop->quit();
+  }
+  
+--- 6,13 ----
+  
+  muduo::EventLoop* g_loop;
+  
+! void timeout(muduo::Timestamp receiveTime){
+!     printf("%s Timeout! go go go!!!!\n", receiveTime.toFormattedString().c_str());
+      g_loop->quit();
+  }
+  
+***************
+*** 15,20 ****
+--- 15,21 ----
+  // 利用Channel将timerfd的readable事件转发给timeout函数
+  int main(int argc, const char *argv[])
+  {
++     printf("%s started\n", muduo::Timestamp::now().toFormattedString().c_str());
+      muduo::EventLoop loop;
+      g_loop = &loop;
+  

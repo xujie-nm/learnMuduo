@@ -1,0 +1,52 @@
+*** ./s06/TcpConnection.cpp	2015-12-23 17:24:54.275373000 +0800
+--- ./s07/TcpConnection.cpp	2015-12-27 21:51:51.856000000 +0800
+***************
+*** 28,34 ****
+      LOG_DEBUG << "TcpConnection::ctor[" << name_ << "] at " << this
+                << " fd = " << sockfd;
+      channel_->setReadCallback(
+!             boost::bind(&TcpConnection::handleRead, this));
+      channel_->setWriteCallback(
+              boost::bind(&TcpConnection::handleWrite, this));
+      channel_->setCloseCallback(
+--- 28,34 ----
+      LOG_DEBUG << "TcpConnection::ctor[" << name_ << "] at " << this
+                << " fd = " << sockfd;
+      channel_->setReadCallback(
+!             boost::bind(&TcpConnection::handleRead, this, _1));
+      channel_->setWriteCallback(
+              boost::bind(&TcpConnection::handleWrite, this));
+      channel_->setCloseCallback(
+***************
+*** 60,73 ****
+      loop_->removeChannel(get_pointer(channel_));
+  }
+  
+! void TcpConnection::handleRead(){
+!     char buf[65536];
+!     ssize_t n =::read(channel_->fd(), buf, sizeof buf);
+      if(n > 0){
+!         messageCallback_(shared_from_this(), buf, n);
+      }else if(n == 0){
+          handleClose();
+      }else{
+          handleError();
+      }
+  }
+--- 60,75 ----
+      loop_->removeChannel(get_pointer(channel_));
+  }
+  
+! void TcpConnection::handleRead(Timestamp receiveTime){
+!     int savedErrno = 0;
+!     ssize_t n = inputBuffer_.readFd(channel_->fd(), &savedErrno);
+      if(n > 0){
+!         messageCallback_(shared_from_this(), &inputBuffer_, receiveTime);
+      }else if(n == 0){
+          handleClose();
+      }else{
++         errno = savedErrno;
++         LOG_SYSERR << "TcpConnection::handleRead";
+          handleError();
+      }
+  }

@@ -1,0 +1,64 @@
+*** ./s06/Channel.h	2015-12-23 17:23:55.271373000 +0800
+--- ./s07/Channel.h	2015-12-27 16:31:58.212000000 +0800
+***************
+*** 4,9 ****
+--- 4,11 ----
+  #include <boost/function.hpp>
+  #include <boost/noncopyable.hpp>
+  
++ #include <datetime/Timestamp.h>
++ 
+  namespace muduo{
+      class EventLoop;
+  
+***************
+*** 15,29 ****
+      class Channel : boost::noncopyable{
+          public:
+              typedef boost::function<void()> EventCallback;
+  
+              Channel(EventLoop* loop, int fd);
+              ~Channel();
+  
+              // 核心函数
+              // 根据revents的值调用不同的用户回调
+!             void handleEvent();
+              
+!             void setReadCallback(const EventCallback& cb){
+                  readCallback_ = cb;
+              }
+              void setWriteCallback(const EventCallback& cb){
+--- 17,32 ----
+      class Channel : boost::noncopyable{
+          public:
+              typedef boost::function<void()> EventCallback;
++             typedef boost::function<void(Timestamp)> ReadEventCallback;
+  
+              Channel(EventLoop* loop, int fd);
+              ~Channel();
+  
+              // 核心函数
+              // 根据revents的值调用不同的用户回调
+!             void handleEvent(Timestamp receiveTime);
+              
+!             void setReadCallback(const ReadEventCallback& cb){
+                  readCallback_ = cb;
+              }
+              void setWriteCallback(const EventCallback& cb){
+***************
+*** 97,103 ****
+  
+              bool eventHandling_;
+  
+!             EventCallback readCallback_;
+              EventCallback writeCallback_;
+              EventCallback errorCallback_;
+              EventCallback closeCallback_;
+--- 100,106 ----
+  
+              bool eventHandling_;
+  
+!             ReadEventCallback readCallback_;
+              EventCallback writeCallback_;
+              EventCallback errorCallback_;
+              EventCallback closeCallback_;

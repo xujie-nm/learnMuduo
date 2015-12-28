@@ -1,0 +1,19 @@
+*** ./s06/EventLoop.cpp	2015-12-23 16:07:07.797544000 +0800
+--- ./s07/EventLoop.cpp	2015-12-27 16:38:18.948000000 +0800
+***************
+*** 64,70 ****
+          pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);
+          for(ChannelList::iterator it = activeChannels_.begin();
+              it != activeChannels_.end(); ++it){
+!             (*it)->handleEvent();
+          }
+          // 执行任务回调
+          doPendingFunctors();
+--- 64,70 ----
+          pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);
+          for(ChannelList::iterator it = activeChannels_.begin();
+              it != activeChannels_.end(); ++it){
+!             (*it)->handleEvent(pollReturnTime_);
+          }
+          // 执行任务回调
+          doPendingFunctors();
