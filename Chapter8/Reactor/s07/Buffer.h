@@ -92,6 +92,7 @@ namespace muduo{
 
             void append(const char* /*restrict*/ data, size_t len){
                 ensureWritableBytes(len);
+                // 把data中的内容拷贝到buffer_中去
                 std::copy(data, data+len, beginWrite());
                 hasWritten(len);
             }
