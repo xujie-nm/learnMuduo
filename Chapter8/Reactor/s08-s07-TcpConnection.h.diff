@@ -1,0 +1,111 @@
+*** ./s07/TcpConnection.h	2015-12-27 16:40:43.120000000 +0800
+--- ./s08/TcpConnection.h	2015-12-29 15:12:12.380000000 +0800
+***************
+*** 37,63 ****
+              EventLoop* getLoop() const{
+                  return loop_;
+              }
+- 
+              const std::string& name() const{
+                  return name_;
+              }
+- 
+              const InetAddress& localAddress(){
+                  return localAddr_;
+              }
+- 
+              const InetAddress& peerAddress(){
+                  return peerAddr_;
+              }
+- 
+              bool connected() const{
+                  return state_ == kConnected;
+              }
+  
+              void setConnectionCallback(const ConnectionCallback& cb){
+                  connectionCallback_ = cb;
+              }
+! 
+              void setMessageCallback(const MessageCallback& cb){
+                  messageCallback_ = cb;
+              }
+--- 37,68 ----
+              EventLoop* getLoop() const{
+                  return loop_;
+              }
+              const std::string& name() const{
+                  return name_;
+              }
+              const InetAddress& localAddress(){
+                  return localAddr_;
+              }
+              const InetAddress& peerAddress(){
+                  return peerAddr_;
+              }
+              bool connected() const{
+                  return state_ == kConnected;
+              }
+  
++             
++             // void send(const void* message, size_t len);
++             // Thread safe
++             void send(const std::string& message);
++             // Thread safe
++             void shutdown();
++ 
++ 
++             
+              void setConnectionCallback(const ConnectionCallback& cb){
+                  connectionCallback_ = cb;
+              }
+!             
+              void setMessageCallback(const MessageCallback& cb){
+                  messageCallback_ = cb;
+              }
+***************
+*** 74,80 ****
+              void connectDestoryed(); // should be called only once
+  
+          private:
+!             enum StateE { kConnecting, kConnected, kDisconnected,};
+  
+              void setState(StateE s){
+                  state_ = s;
+--- 79,85 ----
+              void connectDestoryed(); // should be called only once
+  
+          private:
+!             enum StateE { kConnecting, kConnected, kDisconnecting, kDisconnected,};
+  
+              void setState(StateE s){
+                  state_ = s;
+***************
+*** 82,90 ****
+--- 87,101 ----
+  
+              // 把readable事件交给messagecallback
+              void handleRead(Timestamp receiveTime);
++             // 不会反复调用write
+              void handleWrite();
+              void handleClose();
+              void handleError();
++             // 当本线程就是IO线程时调用
++             // 不会反复调用write
++             void sendInLoop(const std::string& message);
++             // 当本线程就是IO线程时调用
++             void shutdownInLoop();
+  
+              EventLoop* loop_;
+              std::string name_;
+***************
+*** 97,103 ****
+--- 108,116 ----
+              ConnectionCallback connectionCallback_;
+              MessageCallback messageCallback_;
+              CloseCallback closeCallback_;
++             // 输入输出缓冲区
+              Buffer inputBuffer_;
++             Buffer outputBuffer_;
+      };
+  
+      typedef boost::shared_ptr<TcpConnection> TcpConnectionPtr;

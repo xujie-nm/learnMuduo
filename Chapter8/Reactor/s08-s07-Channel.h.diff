@@ -1,0 +1,44 @@
+*** ./s07/Channel.h	2015-12-27 16:31:58.212000000 +0800
+--- ./s08/Channel.h	2015-12-28 15:37:55.639851000 +0800
+***************
+*** 56,73 ****
+                  events_ |= kReadEvent;
+                  update();
+              }
+!             //void enableWriting(){
+!             //    events_ |= kWriteEvent;
+!             //    update();
+!             ///}
+!             //void disableWriting(){
+!             //    events_ &= ~kWriteEvent; 
+!             //    update();
+!             //}
+              void disableAll(){
+                  events_ = kNoneEvent;
+                  update();
+              }
+  
+              // for Poller
+              int index(){
+--- 56,76 ----
+                  events_ |= kReadEvent;
+                  update();
+              }
+!             void enableWriting(){
+!                 events_ |= kWriteEvent;
+!                 update();
+!             }
+!             void disableWriting(){
+!                 events_ &= ~kWriteEvent; 
+!                 update();
+!             }
+              void disableAll(){
+                  events_ = kNoneEvent;
+                  update();
+              }
++             bool isWriting() const{
++                 return events_ & kWriteEvent;
++             }
+  
+              // for Poller
+              int index(){
