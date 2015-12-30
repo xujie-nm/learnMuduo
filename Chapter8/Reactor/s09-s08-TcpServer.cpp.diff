@@ -1,0 +1,12 @@
+*** ./s08/TcpServer.cpp	2015-12-28 15:33:56.663851000 +0800
+--- ./s09/TcpServer.cpp	2015-12-29 16:30:30.232000000 +0800
+***************
+*** 52,57 ****
+--- 52,58 ----
+      connections_[connName] = conn;
+      conn->setConnectionCallback(connectionCallback_);
+      conn->setMessageCallback(messageCallback_);
++     conn->setWriteCompleteCallback(writeCompleteCallback_);
+      conn->setCloseCallback(
+              boost::bind(&TcpServer::removeConnection, this, _1));
+      conn->connectEstablished();

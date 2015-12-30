@@ -1,0 +1,31 @@
+*** ./s08/EventLoop.cpp	2015-12-28 15:33:56.663851000 +0800
+--- ./s09/EventLoop.cpp	2015-12-30 14:50:38.816094000 +0800
+***************
+*** 9,14 ****
+--- 9,15 ----
+  #include <boost/bind.hpp>
+  
+  #include <assert.h>
++ #include <signal.h>
+  #include <sys/eventfd.h>
+  
+  using namespace muduo;
+***************
+*** 24,29 ****
+--- 25,40 ----
+      return evtfd;
+  }
+  
++ // 忽略SIGPIPE,防止接收到SIGPIPE后程序退出
++ class IgnoreSigPipe{
++     public:
++         IgnoreSigPipe(){
++             ::signal(SIGPIPE, SIG_IGN);
++         }
++ };
++ 
++ IgnoreSigPipe initObj;
++ 
+  EventLoop::EventLoop()
+      : looping_(false),
+        quit_(false),

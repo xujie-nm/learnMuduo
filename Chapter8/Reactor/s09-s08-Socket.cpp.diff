@@ -1,0 +1,16 @@
+*** ./s08/Socket.cpp	2015-12-28 15:40:25.595851000 +0800
+--- ./s09/Socket.cpp	2015-12-29 16:29:21.648000000 +0800
+***************
+*** 42,44 ****
+--- 42,52 ----
+  void Socket::shutdownWrite(){
+      sockets::shutdownWrite(sockfd_);
+  }
++ 
++ void Socket::setTcpNoDelay(bool on){
++     int optval = on ? 1 : 0;
++     ::setsockopt(sockfd_, IPPROTO_TCP, TCP_NODELAY,
++                  &optval, sizeof(optval));
++     // FIXME CHECK
++ }
++ 

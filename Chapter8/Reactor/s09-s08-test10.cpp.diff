@@ -1,0 +1,33 @@
+*** ./s08/test10.cpp	2015-12-28 20:08:24.956000000 +0800
+--- ./s09/test10.cpp	2015-12-29 16:11:46.712000000 +0800
+***************
+*** 5,16 ****
+--- 5,20 ----
+  
+  std::string message1;
+  std::string message2;
++ int sleepSeconds = 0;
+  
+  void onConnection(const muduo::TcpConnectionPtr& conn){
+      if(conn->connected()){
+          printf("onConnection(): new connection [%s] from %s\n",
+                 conn->name().c_str(),
+                 conn->peerAddress().toHostPort().c_str());
++         if(sleepSeconds > 0){
++             ::sleep(sleepSeconds);
++         }
+          conn->send(message1);
+          conn->send(message2);
+          conn->shutdown();
+***************
+*** 42,47 ****
+--- 46,54 ----
+          len1 = atoi(argv[1]);
+          len2 = atoi(argv[2]);
+      }
++     if(argc > 3){
++         sleepSeconds = atoi(argv[3]);
++     }
+  
+      message1.resize(len1);
+      message2.resize(len2);

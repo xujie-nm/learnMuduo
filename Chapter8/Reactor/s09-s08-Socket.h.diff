@@ -1,0 +1,21 @@
+*** ./s08/Socket.h	2015-12-28 15:39:18.835851000 +0800
+--- ./s09/Socket.h	2015-12-30 15:01:18.164094000 +0800
+***************
+*** 42,47 ****
+--- 42,57 ----
+  
+              void shutdownWrite();
+  
++             ///
++             /// Enable/disable TCP_NODELAY (disable/enable Nagle's algorithm).
++             /// Nagle算法是用来解决数据包过小频繁发送的问题,
++             /// 通过把较小的数据包放到缓存里攒到一定数量在发送.
++             /// 通过这种方法可以减轻网络的负荷
++             /// 但是在低延迟网络服务中,这种方式会增加网络的延迟
++             /// 所以在实现低延迟网络服务时,禁用Nagle算法
++             ///
++             void setTcpNoDelay(bool on);
++ 
+          private:
+              const int sockfd_;
+      };

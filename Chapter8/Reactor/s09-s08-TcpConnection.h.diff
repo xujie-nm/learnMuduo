@@ -1,0 +1,37 @@
+*** ./s08/TcpConnection.h	2015-12-29 15:12:12.380000000 +0800
+--- ./s09/TcpConnection.h	2015-12-30 15:21:38.212094000 +0800
+***************
+*** 56,61 ****
+--- 56,62 ----
+              void send(const std::string& message);
+              // Thread safe
+              void shutdown();
++             void setTcpNoDelay(bool on);
+  
+  
+              
+***************
+*** 67,72 ****
+--- 68,77 ----
+                  messageCallback_ = cb;
+              }
+  
++             void setWriteCompleteCallback(const WriteCompleteCallback& cb){
++                 writeCompleteCallback_ = cb;
++             }
++ 
+              /// Internal use only.
+              void setCloseCallback(const CloseCallback& cb){
+                  closeCallback_ = cb;
+***************
+*** 107,112 ****
+--- 112,120 ----
+              InetAddress peerAddr_;
+              ConnectionCallback connectionCallback_;
+              MessageCallback messageCallback_;
++             // 发送缓存区被清空时调用
++             // 在sendInLoop和handleWrite中调用
++             WriteCompleteCallback writeCompleteCallback_;
+              CloseCallback closeCallback_;
+              // 输入输出缓冲区
+              Buffer inputBuffer_;

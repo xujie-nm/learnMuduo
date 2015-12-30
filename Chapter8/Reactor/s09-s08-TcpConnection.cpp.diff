@@ -1,0 +1,51 @@
+*** ./s08/TcpConnection.cpp	2015-12-29 15:09:15.396000000 +0800
+--- ./s09/TcpConnection.cpp	2015-12-29 15:56:06.468000000 +0800
+***************
+*** 63,70 ****
+      if(!channel_->isWriting() && outputBuffer_.readableBytes() == 0){
+         nwrote  = ::write(channel_->fd(), message.data(), message.size());
+         if(nwrote >= 0){
+!            if(implicit_cast<size_t>(nwrote) < message.size());
+!            LOG_TRACE << "I am going to write more data";
+         }else{
+             nwrote = 0;
+             if(errno != EWOULDBLOCK){
+--- 63,74 ----
+      if(!channel_->isWriting() && outputBuffer_.readableBytes() == 0){
+         nwrote  = ::write(channel_->fd(), message.data(), message.size());
+         if(nwrote >= 0){
+!            if(implicit_cast<size_t>(nwrote) < message.size()){
+!                LOG_TRACE << "I am going to write more data";
+!            }else if(writeCompleteCallback_){
+!                loop_->queueInLoop(
+!                        boost::bind(writeCompleteCallback_, shared_from_this()));
+!            }
+         }else{
+             nwrote = 0;
+             if(errno != EWOULDBLOCK){
+***************
+*** 100,105 ****
+--- 104,113 ----
+      }
+  }
+  
++ void TcpConnection::setTcpNoDelay(bool on){
++     socket_->setTcpNoDelay(on);
++ }
++ 
+  void TcpConnection::connectEstablished(){
+      loop_->assertInLoopThread();
+      assert(state_ == kConnecting);
+***************
+*** 143,148 ****
+--- 151,160 ----
+              outputBuffer_.retrieve(n);
+              if(outputBuffer_.readableBytes() == 0){ // 发送完毕
+                  channel_->disableWriting();
++                 if(writeCompleteCallback_){
++                     loop_->queueInLoop(
++                             boost::bind(writeCompleteCallback_, shared_from_this()));
++                 }
+                  if(state_ == kDisconnecting){
+                      shutdownInLoop();
+                  }
