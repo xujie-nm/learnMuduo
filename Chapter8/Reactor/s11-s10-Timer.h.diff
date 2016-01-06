@@ -1,0 +1,54 @@
+*** ./s10/Timer.h	2015-12-30 21:04:32.296000000 +0800
+--- ./s11/Timer.h	2015-12-31 16:23:25.636000000 +0800
+***************
+*** 4,9 ****
+--- 4,10 ----
+  #include <boost/noncopyable.hpp>
+  
+  #include "datetime/Timestamp.h"
++ #include "thread/Atomic.h"
+  #include "Callbacks.h"
+  
+  namespace muduo{
+***************
+*** 18,24 ****
+                  : callback_(cb),
+                    expiration_(when),
+                    interval_(interval),
+!                   repeat_(interval > 0.0){
+              }
+                  
+              void run() const{
+--- 19,26 ----
+                  : callback_(cb),
+                    expiration_(when),
+                    interval_(interval),
+!                   repeat_(interval > 0.0),
+!                   sequence_(s_numCreated_.incrementAndGet()){
+              }
+                  
+              void run() const{
+***************
+*** 31,36 ****
+--- 33,41 ----
+              bool repeat() const{
+                  return repeat_;
+              }
++             int64_t sequence() const{
++                 return sequence_;
++             }
+  
+              void restart(Timestamp now);
+  
+***************
+*** 40,45 ****
+--- 45,53 ----
+              Timestamp expiration_;
+              const double interval_;
+              const bool repeat_;
++             const int64_t sequence_;
++ 
++             static AtomicInt64 s_numCreated_;
+      };
+  }
+  

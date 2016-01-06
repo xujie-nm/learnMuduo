@@ -1,0 +1,15 @@
+*** ./s10/EventLoop.cpp	2015-12-30 21:04:32.296000000 +0800
+--- ./s11/EventLoop.cpp	2015-12-31 16:06:34.052000000 +0800
+***************
+*** 131,136 ****
+--- 131,140 ----
+      return timerQueue_->addTimer(cb, time, interval);
+  }
+  
++ void EventLoop::cancel(TimerId timerId){
++     return timerQueue_->cancel(timerId);
++ }
++ 
+  void EventLoop::updateChannel(Channel* channel){
+      assert(channel->ownerLoop() == this);
+      assertInLoopThread();

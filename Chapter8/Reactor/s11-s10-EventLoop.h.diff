@@ -1,0 +1,19 @@
+*** ./s10/EventLoop.h	2015-12-30 21:04:32.296000000 +0800
+--- ./s11/EventLoop.h	2015-12-31 16:03:52.668000000 +0800
+***************
+*** 79,85 ****
+              TimerId runEvery(double interval, const TimerCallback& cb);
+  
+  
+!             // void cancel(TimerId timerId)
+  
+              // internal use only
+  
+--- 79,85 ----
+              TimerId runEvery(double interval, const TimerCallback& cb);
+  
+  
+!             void cancel(TimerId timerId);
+  
+              // internal use only
+  

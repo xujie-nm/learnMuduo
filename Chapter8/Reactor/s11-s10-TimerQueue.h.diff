@@ -1,0 +1,56 @@
+*** ./s10/TimerQueue.h	2015-12-30 21:04:32.296000000 +0800
+--- ./s11/TimerQueue.h	2016-01-06 15:56:14.564000000 +0800
+***************
+*** 36,52 ****
+              TimerId addTimer(const TimerCallback& cb,
+                               Timestamp when,
+                               double interval);
+! 
+!             // void cancel(TimerId timerId);
+  
+          private:
+  
+              // FIXME: use unique_ptr<Timer> instead of raw pointers.
+              typedef std::pair<Timestamp, Timer* > Entry;
+              typedef std::set<Entry> TimerList;
+  
+              // 在IO线程中调用这个函数，用它来完成修改定时器列表的工作
+              void addTimerInLoop(Timer* timer);
+              // called when timerfd alarms
+              void handleRead();
+              // move out all expired timers
+--- 36,55 ----
+              TimerId addTimer(const TimerCallback& cb,
+                               Timestamp when,
+                               double interval);
+!             // 注销定时器,safe,在loop中取消
+!             void cancel(TimerId timerId);
+  
+          private:
+  
+              // FIXME: use unique_ptr<Timer> instead of raw pointers.
+              typedef std::pair<Timestamp, Timer* > Entry;
+              typedef std::set<Entry> TimerList;
++             typedef std::pair<Timer*, int64_t> ActiveTimer;
++             typedef std::set<ActiveTimer> ActiveTimerSet;
+  
+              // 在IO线程中调用这个函数，用它来完成修改定时器列表的工作
+              void addTimerInLoop(Timer* timer);
++             void cancelInLoop(TimerId timerId);
+              // called when timerfd alarms
+              void handleRead();
+              // move out all expired timers
+***************
+*** 60,65 ****
+--- 63,73 ----
+              Channel timerfdChannel_;
+              // Timer list sorted by expiration
+              TimerList timers_;
++ 
++             // for cancel()
++             bool callingExpiredTimers_; /*atomic*/
++             ActiveTimerSet activeTimers_;
++             ActiveTimerSet cancelingTimers_;
+      };
+  }
+  
