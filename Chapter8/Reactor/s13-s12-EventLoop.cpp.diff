@@ -1,0 +1,38 @@
+*** ./s12/EventLoop.cpp	2016-01-06 16:12:35.816000000 +0800
+--- ./s13/EventLoop.cpp	2016-01-07 17:09:45.328000000 +0800
+***************
+*** 1,7 ****
+  #include "EventLoop.h"
+  
+  #include "Channel.h"
+! #include "Poller.h"
+  #include "TimerQueue.h"
+  
+  #include "logging/Logging.h"
+--- 1,8 ----
+  #include "EventLoop.h"
+  
+  #include "Channel.h"
+! //#include "Poller.h"
+! #include "EPoller.h"
+  #include "TimerQueue.h"
+  
+  #include "logging/Logging.h"
+***************
+*** 40,46 ****
+        quit_(false),
+        callingPendingFunctors_(false),
+        threadId_(CurrentThread::tid()),
+!       poller_(new Poller(this)),
+        timerQueue_(new TimerQueue(this)),
+        wakeupFd_(createEventfd()),
+        wakeupChannel_(new Channel(this, wakeupFd_)){
+--- 41,48 ----
+        quit_(false),
+        callingPendingFunctors_(false),
+        threadId_(CurrentThread::tid()),
+!       //poller_(new Poller(this)),
+!       poller_(new EPoller(this)),
+        timerQueue_(new TimerQueue(this)),
+        wakeupFd_(createEventfd()),
+        wakeupChannel_(new Channel(this, wakeupFd_)){

@@ -1,0 +1,38 @@
+*** ./s12/EventLoop.h	2016-01-06 16:12:35.816000000 +0800
+--- ./s13/EventLoop.h	2016-01-07 17:08:44.384000000 +0800
+***************
+*** 12,18 ****
+  
+  namespace muduo{
+      class Channel;
+!     class Poller;
+      class TimerQueue;
+  
+      class EventLoop : boost::noncopyable{
+--- 12,19 ----
+  
+  namespace muduo{
+      class Channel;
+!     //class Poller;
+!     class EPoller;
+      class TimerQueue;
+  
+      class EventLoop : boost::noncopyable{
+***************
+*** 115,121 ****
+              bool callingPendingFunctors_; // atomic
+              const pid_t threadId_;
+              Timestamp pollReturnTime_;
+!             boost::scoped_ptr<Poller> poller_;
+              boost::scoped_ptr<TimerQueue> timerQueue_;
+              int wakeupFd_;
+              // unlike in TimerQueue, which is an internal class,
+--- 116,123 ----
+              bool callingPendingFunctors_; // atomic
+              const pid_t threadId_;
+              Timestamp pollReturnTime_;
+!             //boost::scoped_ptr<Poller> poller_;
+!             boost::scoped_ptr<EPoller> poller_;
+              boost::scoped_ptr<TimerQueue> timerQueue_;
+              int wakeupFd_;
+              // unlike in TimerQueue, which is an internal class,
